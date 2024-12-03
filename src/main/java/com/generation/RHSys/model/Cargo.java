@@ -1,5 +1,7 @@
 package com.generation.RHSys.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +23,7 @@ public class Cargo {
 	
 	@NotBlank(message = "O salário deve ser registrado")
 	@Digits(integer = 5, fraction = 2, message = "O salario esperado deve conter 5 digitos inteiros com 2 casas decimais")
-	private double salario;
+	private BigDecimal salario;
 	
 
 	public Long getId() {
@@ -40,11 +42,11 @@ public class Cargo {
 		this.cargo = cargo;
 	}
 
-	public double getSalario() {
+	public BigDecimal getSalario() {
 		return salario;
 	}
 
-	public void setSalario(double salario) {
+	public void setSalario(BigDecimal salario) {
 		this.salario = salario;
 	}
 	

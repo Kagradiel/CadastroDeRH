@@ -9,5 +9,5 @@ import com.generation.RHSys.model.Cargo;
 
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
 
-	public List <Cargo> findByTituloContainingIgnoreCase(@Param("cargo") String cargo); 
+	public List <Cargo> findByCargoContainingIgnoreCase(@Param("cargo") String cargo); 
 }

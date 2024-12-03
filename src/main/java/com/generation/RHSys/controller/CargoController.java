@@ -41,7 +41,7 @@ public class CargoController {
 	@GetMapping("/cargo/{cargo}")
 	public ResponseEntity<List<Cargo>> getBycargo(@PathVariable String cargo){
 		return ResponseEntity.ok(cargoRepository
-				.findByTituloContainingIgnoreCase(cargo));
+				.findByCargoContainingIgnoreCase(cargo));
 	}
 	
 	@PostMapping

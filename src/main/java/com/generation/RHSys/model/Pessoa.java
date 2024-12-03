@@ -1,9 +1,11 @@
 package com.generation.RHSys.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,9 +32,10 @@ public class Pessoa {
 	@NotNull(message = "O Atributo Endereco é obrigatório")
 	@Size(min = 10, max = 255, message = "O atributo deve conter no mínimo 10 e no máximo 255 caracteres")
 	private String endereco;
-
+	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message = "O Atributo Data de nascimento é obrigatório")
-	private Date dataNascimento;
+	private LocalDate dataNascimento;
 
 	@UpdateTimestamp
 	private LocalDateTime dataAdmissao;
@@ -69,11 +72,11 @@ public class Pessoa {
 		this.endereco = endereco;
 	}
 
-	public Date getDataNascimento() {
+	public LocalDate getDataNascimento() {
 		return dataNascimento;
 	}
 
-	public void setDataNascimento(Date dataNascimento) {
+	public void setDataNascimento(LocalDate dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
 
