@@ -11,13 +11,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.generation.RHSys.dto.CargoCreateDTO;
+import com.generation.RHSys.dto.CargoUpdateDTO;
 import com.generation.RHSys.model.Cargo;
 import com.generation.RHSys.repository.CargoRepository;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/cargo")
@@ -45,16 +50,17 @@ public class CargoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Cargo> post(Cargo cargo){
+	public ResponseEntity<Cargo> post(@Valid @RequestBody CargoCreateDTO cargo){
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(cargoRepository.save(cargo));
+				.body(cargoRepository.save(cargo.toEntity()));
 	}
 	
 	@PutMapping
-	public ResponseEntity<Cargo> put(Cargo cargo){
-		return cargoRepository.findById(cargo.getId())
+	public ResponseEntity<Cargo> put(@Valid @RequestBody CargoUpdateDTO cargo){
+		Cargo novoCargo = cargo.toEntity();
+		return cargoRepository.findById(novoCargo.getId())
 				.map(resposta -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(cargoRepository.save(cargo)))
+						.body(cargoRepository.save(novoCargo)))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	

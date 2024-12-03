@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.generation.RHSys.dto.PessoaCreateDTO;
+import com.generation.RHSys.dto.PessoaUpdateDTO;
 import com.generation.RHSys.model.Pessoa;
 import com.generation.RHSys.repository.PessoaRepository;
 
@@ -50,18 +52,18 @@ public class PessoaController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Pessoa> post(@Valid @RequestBody Pessoa pessoa){
+	public ResponseEntity<Pessoa> post(@Valid @RequestBody PessoaCreateDTO pessoa){
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(pessoaRepository.save(pessoa));
+				.body(pessoaRepository.save(pessoa.toEntity()));
 	}
 	
 	@PutMapping
-	public ResponseEntity<Pessoa> put(@Valid @RequestBody Pessoa pessoa){
-		return pessoaRepository.findById(pessoa.getId()) 
+	public ResponseEntity<Pessoa> put(@Valid @RequestBody PessoaUpdateDTO pessoa){
+		Pessoa novaPessoa = pessoa.toEntity();
+		return pessoaRepository.findById(novaPessoa.getId()) 
 				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
-				.body(pessoaRepository.save(pessoa)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-			
+				.body(pessoaRepository.save(novaPessoa)))
+				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());		
 	}
 	
 	@ResponseStatus(HttpStatus.NO_CONTENT)
