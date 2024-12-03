@@ -6,11 +6,13 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,10 +38,14 @@ public class Pessoa {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message = "O Atributo Data de nascimento é obrigatório")
 	private LocalDate dataNascimento;
-
+	
 	@UpdateTimestamp
 	private LocalDateTime dataAdmissao;
 
+	@ManyToOne
+	@JsonIgnoreProperties("pessoa")
+	private Cargo cargo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -86,6 +92,14 @@ public class Pessoa {
 
 	public void setDataAdmissao(LocalDateTime dataAdmissao) {
 		this.dataAdmissao = dataAdmissao;
+	}
+
+	public Cargo getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(Cargo cargo) {
+		this.cargo = cargo;
 	}
 	
 	
