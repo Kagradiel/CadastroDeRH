@@ -34,9 +34,8 @@ public class PessoaController {
 	@GetMapping
 	public ResponseEntity<List<Pessoa>> getAll() {
 		return ResponseEntity.ok(pessoaRepository.findAll());
-
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Pessoa> getById(@PathVariable Long id) {
 		return pessoaRepository.findById(id)
@@ -72,8 +71,6 @@ public class PessoaController {
 		if(pessoa.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		
-		pessoaRepository.deleteById(id);
-		
-	}
-	
+		pessoaRepository.deleteById(id);	
+	}	
 }
