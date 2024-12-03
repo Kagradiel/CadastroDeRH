@@ -3,7 +3,9 @@ package com.generation.RHSys.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,45 +24,65 @@ import com.generation.RHSys.dto.CargoUpdateDTO;
 import com.generation.RHSys.model.Cargo;
 import com.generation.RHSys.repository.CargoRepository;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/cargo")
 @CrossOrigin(origins = "*" ,allowedHeaders = "*")
+@Tag(name = "cargos", description = "Operações relacionadas aos cargos dos funcionários")
 public class CargoController {
 	
-	public CargoRepository cargoRepository;
+	@Autowired
+	private CargoRepository cargoRepository;
 	
-	@GetMapping
+	
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Cargo>> getAll(){
 		return ResponseEntity.ok(cargoRepository.findAll());
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Cargo> getById(@PathVariable Long id){
 		return cargoRepository.findById(id)
 				.map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
-	@GetMapping("/cargo/{cargo}")
+	@GetMapping(value = "/cargo/{cargo}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Cargo>> getBycargo(@PathVariable String cargo){
 		return ResponseEntity.ok(cargoRepository
 				.findByCargoContainingIgnoreCase(cargo));
 	}
 	
-	@PostMapping
-	public ResponseEntity<Cargo> post(@Valid @RequestBody CargoCreateDTO cargo){
+	@PostMapping(
+	        consumes = MediaType.APPLICATION_JSON_VALUE,
+	        produces = MediaType.APPLICATION_JSON_VALUE
+	    )
+	public ResponseEntity<Cargo> post(@Valid @RequestBody CargoCreateDTO cargoDTO){
+		
+		Cargo cargo = new Cargo();
+		cargo.setCargo(cargoDTO.getCargo());
+		cargo.setSalario(cargoDTO.getSalario());
+		
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(cargoRepository.save(cargo.toEntity()));
+				.body(cargoRepository.save(cargo));
 	}
 	
-	@PutMapping
-	public ResponseEntity<Cargo> put(@Valid @RequestBody CargoUpdateDTO cargo){
-		Cargo novoCargo = cargo.toEntity();
-		return cargoRepository.findById(novoCargo.getId())
-				.map(resposta -> ResponseEntity.status(HttpStatus.CREATED)
-						.body(cargoRepository.save(novoCargo)))
+	@PutMapping(
+	        consumes = MediaType.APPLICATION_JSON_VALUE,
+	        produces = MediaType.APPLICATION_JSON_VALUE
+	    )
+	public ResponseEntity<Cargo> put(@Valid @RequestBody CargoUpdateDTO cargoDTO){
+		return cargoRepository.findById(cargoDTO.getId())
+				.map(cargo -> {
+					
+					cargo.setCargo(cargoDTO.getCargo());
+					cargo.setSalario(cargoDTO.getSalario());
+					
+					return ResponseEntity.status(HttpStatus.CREATED)
+					.body(cargoRepository.save(cargo));
+				})
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	

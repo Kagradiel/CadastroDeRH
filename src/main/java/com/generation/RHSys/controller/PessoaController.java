@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,50 +21,84 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.RHSys.dto.PessoaCreateDTO;
 import com.generation.RHSys.dto.PessoaUpdateDTO;
+import com.generation.RHSys.model.Cargo;
 import com.generation.RHSys.model.Pessoa;
 import com.generation.RHSys.repository.PessoaRepository;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/pessoas")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Tag(name = "Funcionários", description = "Operações relacionadas aos funcionários")
 public class PessoaController {
 
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Pessoa>> getAll() {
 		return ResponseEntity.ok(pessoaRepository.findAll());
 
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Pessoa> getById(@PathVariable Long id) {
 		return pessoaRepository.findById(id)
 				.map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
-	@GetMapping("/nome/{nome}")
+	@GetMapping(value = "/nome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Pessoa>> getByNome(@PathVariable String nome){
 		return ResponseEntity.ok(pessoaRepository.findAllByNomeContainingIgnoreCase(nome));
 	}
 	
-	@PostMapping
-	public ResponseEntity<Pessoa> post(@Valid @RequestBody PessoaCreateDTO pessoa){
+	@PostMapping(
+	        consumes = MediaType.APPLICATION_JSON_VALUE,
+	        produces = MediaType.APPLICATION_JSON_VALUE
+	    ) 
+	public ResponseEntity<Pessoa> post(@Valid @RequestBody PessoaCreateDTO pessoaDTO){
+		
+		Pessoa pessoa = new Pessoa();
+		pessoa.setNome(pessoaDTO.getNome());
+		pessoa.setCpf(pessoaDTO.getCpf());
+		pessoa.setDataNascimento(pessoaDTO.getDataNascimento());
+		pessoa.setEndereco(pessoaDTO.getEndereco());
+		
+		Cargo cargo = new Cargo();
+		cargo.setId(pessoaDTO.getCargo().getId());
+		
+		pessoa.setCargo(cargo);
+		
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(pessoaRepository.save(pessoa.toEntity()));
+				.body(pessoaRepository.save(pessoa));
 	}
 	
-	@PutMapping
-	public ResponseEntity<Pessoa> put(@Valid @RequestBody PessoaUpdateDTO pessoa){
-		Pessoa novaPessoa = pessoa.toEntity();
-		return pessoaRepository.findById(novaPessoa.getId()) 
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
-				.body(pessoaRepository.save(novaPessoa)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());		
+	@PutMapping(
+	        consumes = MediaType.APPLICATION_JSON_VALUE,
+	        produces = MediaType.APPLICATION_JSON_VALUE
+	    ) 
+	public ResponseEntity<Pessoa> put(@Valid @RequestBody PessoaUpdateDTO pessoaDTO) {
+	    return pessoaRepository.findById(pessoaDTO.getId())
+	            .map(pessoa -> 
+	            {
+	            	pessoa.setNome(pessoaDTO.getNome());
+	            	pessoa.setCpf(pessoaDTO.getCpf());
+	            	pessoa.setDataNascimento(pessoaDTO.getDataNascimento());
+	            	pessoa.setEndereco(pessoaDTO.getEndereco());
+	            	
+	            	Cargo cargo = new Cargo();
+	        		cargo.setId(pessoaDTO.getCargo().getId());
+	        		
+	        		pessoa.setCargo(cargo);
+                
+	            	
+	            	return ResponseEntity.status(HttpStatus.OK)
+                        .body(pessoaRepository.save(pessoa));
+	            })
+	            .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
 	@ResponseStatus(HttpStatus.NO_CONTENT)
