@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tb_cargos")
@@ -27,7 +28,7 @@ public class Cargo {
 	@NotBlank(message = "O atributo cargo é obrigatório")
 	private String cargo;
 	
-	@NotBlank(message = "O salário deve ser registrado")
+	@NotNull(message = "O salário deve ser registrado")
 	@Digits(integer = 5, fraction = 2, message = "O salario esperado deve conter 5 digitos inteiros com 2 casas decimais")
 	private BigDecimal salario;
 	
