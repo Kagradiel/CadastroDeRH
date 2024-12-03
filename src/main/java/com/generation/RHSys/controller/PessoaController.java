@@ -58,8 +58,8 @@ public class PessoaController {
 	@PutMapping
 	public ResponseEntity<Pessoa> put(@Valid @RequestBody Pessoa pessoa){
 		return pessoaRepository.findById(pessoa.getId()) 
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK))
-				.body(pessoaRepository.save(pessoa))
+				.map(resposta -> ResponseEntity.status(HttpStatus.OK)
+				.body(pessoaRepository.save(pessoa)))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 			
 	}
