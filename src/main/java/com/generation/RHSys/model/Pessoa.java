@@ -36,10 +36,10 @@ public class Pessoa {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message = "O Atributo Data de nascimento é obrigatório")
 	private LocalDate dataNascimento;
-
+	
 	@UpdateTimestamp
 	private LocalDateTime dataAdmissao;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -87,6 +87,5 @@ public class Pessoa {
 	public void setDataAdmissao(LocalDateTime dataAdmissao) {
 		this.dataAdmissao = dataAdmissao;
 	}
-	
 	
 }
